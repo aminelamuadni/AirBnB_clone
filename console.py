@@ -9,11 +9,17 @@ clone project.
 import cmd
 from models import storage
 from models.base_model import BaseModel
+from models.user import User
 
 
 class HBNBCommand(cmd.Cmd):
     """Simple command processor for AirBnB clone."""
     prompt = '(hbnb) '
+
+    class_dict = {
+        "BaseModel": BaseModel,
+        "User": User
+    }
 
     def do_quit(self, arg):
         """Quit command to exit the program."""
@@ -32,15 +38,16 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, arg):
         """
-        Creates a new instance of BaseModel and saves it to the JSON file.
+        Creates a new instance of the specified class and saves it to the JSON
+        file.
         """
         if not arg:
             print("** class name missing **")
             return
-        if arg != "BaseModel":
+        if arg != self.class_dict:
             print("** class doesn't exist **")
             return
-        obj = BaseModel()
+        obj = self.class_dict[arg]()
         obj.save()
         print(obj.id)
 
@@ -50,7 +57,7 @@ class HBNBCommand(cmd.Cmd):
         if not args:
             print("** class name missing **")
             return
-        if args[0] != "BaseModel":
+        if args[0] not in self.class_dict:
             print("** class doesn't exist **")
             return
         if len(args) < 2:
@@ -68,7 +75,7 @@ class HBNBCommand(cmd.Cmd):
         if not args:
             print("** class name missing **")
             return
-        if args[0] != "BaseModel":
+        if args[0] not in self.class_dict:
             print("** class doesn't exist **")
             return
         if len(args) < 2:
@@ -83,7 +90,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_all(self, arg):
         """Prints all string representations of instances."""
-        if arg and arg != "BaseModel":
+        if arg and arg not in self.class_dict:
             print("** class doesn't exist **")
             return
         objs = storage.all()
@@ -101,7 +108,7 @@ class HBNBCommand(cmd.Cmd):
         if not args or args[0] == "":
             print("** class name missing **")
             return
-        if args[0] != "BaseModel":
+        if args[0] not in self.class_dict:
             print("** class doesn't exist **")
             return
         if len(args) < 2:
@@ -118,7 +125,8 @@ class HBNBCommand(cmd.Cmd):
             return
 
         obj = storage.all()[f"{args[0]}.{args[1]}"]
-        setattr(obj, args[2], args[3].strip('"'))
+        value = args[3].strip('"\'')
+        setattr(obj, args[2], value)
         obj.save()
 
 
