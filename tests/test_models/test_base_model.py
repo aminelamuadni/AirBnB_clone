@@ -63,6 +63,21 @@ class TestBaseModel(unittest.TestCase):
         self.assertIn('updated_at', model_dict)
         self.assertIn('id', model_dict)
 
+    def test_create_from_dict(self):
+        """
+        Test creating a BaseModel instance from a dictionary.
+        """
+        my_model = BaseModel()
+        my_model.name = "My_First_Model"
+        my_model.my_number = 89
+        my_model_json = my_model.to_dict()
+
+        my_new_model = BaseModel(**my_model_json)
+        self.assertEqual(my_new_model.id, my_model.id)
+        self.assertEqual(my_new_model.name, "My_First_Model")
+        self.assertEqual(my_new_model.my_number, 89)
+        self.assertNotEqual(my_new_model, my_model)
+
 
 if __name__ == '__main__':
     unittest.main()
