@@ -37,6 +37,20 @@ Here are some common commands you can use in the console:
 - `all [<class name>]`: Prints all instances, or if a class name is provided, all instances of that class. If the class name doesn't exist, an error message is displayed.
 - `update <class name> <id> <attribute name> "<attribute value>"`: Updates an instance based on the class name and id by adding or updating an attribute, and saves the change to the JSON file. Only one attribute can be updated at a time. The command includes checks for missing class name, non-existing class, missing id, instance not found, missing attribute name, and missing value for the attribute.
 
+## Examples
+
+Creating a new User:
+
+```
+(hbnb) create User
+```
+
+Retrieving a User instance:
+
+```
+(hbnb) show User <user_id>
+```
+
 ## Authors
 
 This project was created by:
