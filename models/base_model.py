@@ -17,20 +17,37 @@ class BaseModel:
     """
     BaseModel class that defines all common attributes
     and methods for other classes.
+
+    Attributes:
+        id (str): unique id for each instance, generated using uuid.
+        created_at (datetime): current datetime when an instance is created.
+        updated_at (datetime): current datetime when an instance is created
+        and will be updated on each object change.
     """
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         """
         Initializes a new instance of BaseModel.
-        Attributes:
-            id (str): unique id for each instance, generated using uuid.
-            created_at (datetime): current datetime when an instance is
-            created.
-            updated_at (datetime): current datetime when an instance is created
-            and will be updated on each object change.
+
+        Args:
+            *args (unused): Variable length argument list.
+            **kwargs (dict): Key/value pairs of attributes, including id,
+            created_at, and updated_at.
+
+        If kwargs is not empty, it initializes the instance attributes with
+        values from kwargs.
+        If kwargs is empty, it initializes id, created_at, and updated_at with
+        default values.
         """
-        self.id = str(uuid.uuid4())
-        self.created_at = self.updated_at = datetime.now()
+        if kwargs:
+            for key, value in kwargs.items():
+                if key in ['created_at', 'updated_at']:
+                    value = datetime.fromisoformat(value)
+                if key != '__class__':
+                    setattr(self, key, value)
+        else:
+            self.id = str(uuid.uuid4())
+            self.created_at = self.updated_at = datetime.now()
 
     def __str__(self):
         """
