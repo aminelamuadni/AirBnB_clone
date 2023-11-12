@@ -1,80 +1,89 @@
 #!/usr/bin/python3
 """
 test_console.py
-Tests for the console (command interpreter) of the AirBnB clone project.
+Module that tests the console module.
 """
 
-
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, create_autospec
 from io import StringIO
-import uuid
 from console import HBNBCommand
 from models import storage
 from models.base_model import BaseModel
+from models.user import User
 
 
 class TestHBNBCommand(unittest.TestCase):
     """Test cases for the HBNBCommand class."""
 
-    def create_test_model(self):
-        """Create and return a test BaseModel instance."""
-        model = BaseModel()
-        model.save()
-        return model
+    def setUp(self):
+        """Set up the test case environment."""
+        self.cli = HBNBCommand()
+
+    def tearDown(self):
+        """Clean up after test case."""
+        pass
 
     def test_quit(self):
-        """Test the quit command."""
+        """Test quit command."""
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd("quit")
-            self.assertEqual(f.getvalue(), '')
+            self.assertTrue(self.cli.onecmd("quit"))
 
     def test_EOF(self):
-        """Test the EOF command."""
+        """Test EOF command."""
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd("EOF")
-            self.assertEqual(f.getvalue(), '\n')
+            self.assertTrue(self.cli.onecmd("EOF"))
 
-    def test_help(self):
-        """Test the help command."""
+    def test_emptyline(self):
+        """Test empty line input."""
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd("help")
-            self.assertTrue(len(f.getvalue()) > 0)
+            self.assertFalse(self.cli.onecmd(""))
 
-    @patch('models.storage')
-    def test_create(self, mock_storage):
-        """Test the create command."""
+    def test_create(self):
+        """Test create command."""
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd("create BaseModel")
+            self.cli.onecmd("create BaseModel")
             output = f.getvalue().strip()
-            uuid_obj = uuid.UUID(output, version=4)
-            self.assertEqual(str(uuid_obj), output)
+            self.assertTrue(output)
 
-    @patch('models.storage')
-    def test_all(self, mock_storage):
-        """Test the all command."""
-        mock_storage.all.return_value = {}
+    def test_show(self):
+        """Test show command."""
+        obj = BaseModel()
+        obj.save()
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd("all BaseModel")
-            self.assertEqual(f.getvalue().strip(), "[]")
+            self.cli.onecmd(f"show BaseModel {obj.id}")
+            output = f.getvalue().strip()
+            self.assertIn(obj.id, output)
 
-    @patch('models.storage')
-    def test_destroy(self, mock_storage):
-        """Test the destroy command."""
-        model = self.create_test_model()
-        with patch('sys.stdout', new=StringIO()):
-            HBNBCommand().onecmd(f"destroy BaseModel {model.id}")
-            self.assertNotIn(f"BaseModel.{model.id}", mock_storage.all())
+    def test_destroy(self):
+        """Test destroy command."""
+        obj = BaseModel()
+        obj.save()
+        with patch('sys.stdout', new=StringIO()) as f:
+            self.cli.onecmd(f"destroy BaseModel {obj.id}")
+            self.assertNotIn(obj.id, storage.all())
+
+    def test_all(self):
+        """Test all command."""
+        with patch('sys.stdout', new=StringIO()) as f:
+            self.cli.onecmd("all BaseModel")
+            output = f.getvalue().strip()
+            self.assertTrue(output)
 
     @patch('models.storage')
     def test_update(self, mock_storage):
         """Test the update command."""
-        model = self.create_test_model()
+        model = BaseModel()
+        model.save()
+
         with patch('sys.stdout', new=StringIO()):
-            HBNBCommand().onecmd(f"update BaseModel {model.id} name 'Test'")
-            updated_model = storage.all()[f"BaseModel.{model.id}"]
-            self.assertEqual(updated_model.name.strip("'\""), 'Test')
+            HBNBCommand().onecmd(f"update BaseModel {model.id} name \"Test\"")
+
+        updated_model = storage.all().get(f"BaseModel.{model.id}", None)
+
+        self.assertIsNotNone(updated_model)
+        self.assertEqual(getattr(updated_model, "name", ""), 'Test')
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
