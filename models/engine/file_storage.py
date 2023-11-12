@@ -47,7 +47,9 @@ class FileStorage:
 
             for key, value in json_objects.items():
                 cls_name = value['__class__']
-
                 if cls_name == 'BaseModel':
                     from models.base_model import BaseModel
                     self.__objects[key] = BaseModel(**value)
+                elif cls_name == 'User':
+                    from models.user import User
+                    self.__objects[key] = User(**value)
