@@ -44,7 +44,7 @@ class HBNBCommand(cmd.Cmd):
         if not arg:
             print("** class name missing **")
             return
-        if arg != self.class_dict:
+        if arg not in self.class_dict:
             print("** class doesn't exist **")
             return
         obj = self.class_dict[arg]()
