@@ -51,6 +51,16 @@ class HBNBCommand(cmd.Cmd):
             elif re.match(r"destroy\(\".+\"\)", command):
                 id = re.findall(r"destroy\(\"(.+)\"\)", command)[0]
                 self.do_destroy(f"{class_name} {id}")
+            elif re.match(r"update\(\".+\", \".+\", \".+\"\)", command):
+                match = re.findall(
+                    r"update\(\"(.+)\", \"(.+)\", \"(.+)\"\)",
+                    command
+                )
+                if match:
+                    id, attribute_name, attribute_value = match[0]
+                    self.do_update(
+                        f"{class_name} {id} {attribute_name} {attribute_value}"
+                    )
 
     def do_quit(self, arg):
         """Quit command to exit the program.
