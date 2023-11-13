@@ -31,6 +31,14 @@ class HBNBCommand(cmd.Cmd):
         "Review": Review
     }
 
+    def default(self, line):
+        """
+        Default method called for commands that don't match any do_* commands.
+        """
+        args = line.split('.')
+        if len(args) == 2 and args[1] == "all()":
+            self.do_all(args[0])
+
     def do_quit(self, arg):
         """Quit command to exit the program.
         Usage: quit
