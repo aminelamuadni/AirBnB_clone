@@ -7,6 +7,7 @@ clone project.
 
 
 import cmd
+import re
 from models import storage
 from models.base_model import BaseModel
 from models.user import User
@@ -37,10 +38,16 @@ class HBNBCommand(cmd.Cmd):
         """
         args = line.split('.')
         if len(args) == 2:
-            if args[1] == "all()":
-                self.do_all(args[0])
-            elif args[1] == "count()":
-                self.do_count(args[0])
+            class_name = args[0]
+            command = args[1]
+
+            if command == "all()":
+                self.do_all(class_name)
+            elif command == "count()":
+                self.do_count(class_name)
+            elif re.match(r"show\(\".+\"\)", command):
+                id = re.findall(r"show\(\"(.+)\"\)", command)[0]
+                self.do_show(f"{class_name} {id}")
 
     def do_quit(self, arg):
         """Quit command to exit the program.
