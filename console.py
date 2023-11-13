@@ -10,6 +10,11 @@ import cmd
 from models import storage
 from models.base_model import BaseModel
 from models.user import User
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.place import Place
+from models.review import Review
 
 
 class HBNBCommand(cmd.Cmd):
@@ -18,15 +23,24 @@ class HBNBCommand(cmd.Cmd):
 
     class_dict = {
         "BaseModel": BaseModel,
-        "User": User
+        "User": User,
+        "State": State,
+        "City": City,
+        "Amenity": Amenity,
+        "Place": Place,
+        "Review": Review
     }
 
     def do_quit(self, arg):
-        """Quit command to exit the program."""
+        """Quit command to exit the program.
+        Usage: quit
+        """
         return True
 
     def do_EOF(self, arg):
-        """EOF command to exit the program."""
+        """EOF command to exit the program.
+        Usage: EOF
+        """
         print()
         return True
 
@@ -40,6 +54,7 @@ class HBNBCommand(cmd.Cmd):
         """
         Creates a new instance of the specified class and saves it to the JSON
         file.
+        Usage: create <class name>
         """
         if not arg:
             print("** class name missing **")
@@ -52,7 +67,9 @@ class HBNBCommand(cmd.Cmd):
         print(obj.id)
 
     def do_show(self, arg):
-        """Shows an instance based on the class name and id."""
+        """Shows an instance based on the class name and id.
+        Usage: show <class name> <id>
+        """
         args = arg.split()
         if not args:
             print("** class name missing **")
@@ -70,7 +87,9 @@ class HBNBCommand(cmd.Cmd):
         print(storage.all()[key])
 
     def do_destroy(self, arg):
-        """Destroys an instance based on the class name and id."""
+        """Destroys an instance based on the class name and id.
+        Usage: destroy <class name> <id>
+        """
         args = arg.split()
         if not args:
             print("** class name missing **")
@@ -89,7 +108,9 @@ class HBNBCommand(cmd.Cmd):
         storage.save()
 
     def do_all(self, arg):
-        """Prints all string representations of instances."""
+        """Prints all string representations of instances.
+        Usage: all [class name]
+        """
         if arg and arg not in self.class_dict:
             print("** class doesn't exist **")
             return
@@ -103,6 +124,7 @@ class HBNBCommand(cmd.Cmd):
         """
         Updates an instance based on class name and id by adding or updating
         attribute.
+        Usage: update <class name> <id> <attribute name> "<attribute value>"
         """
         args = arg.split(" ")
         if not args or args[0] == "":
