@@ -13,6 +13,8 @@ import json
 import os
 from models.engine.file_storage import FileStorage
 from models.base_model import BaseModel
+from models.user import User
+from models.state import State
 
 
 class TestFileStorage(unittest.TestCase):
@@ -61,6 +63,27 @@ class TestFileStorage(unittest.TestCase):
         self.storage.reload()
         key = "{}.{}".format(type(obj).__name__, obj.id)
         self.assertIn(key, self.storage.all())
+
+    def test_reload_with_various_classes(self):
+        """Test reload() with various class types."""
+        user = User()
+        state = State()
+        self.storage.new(user)
+        self.storage.new(state)
+        self.storage.save()
+        self.storage.reload()
+        self.assertIn(f"User.{user.id}", self.storage.all())
+        self.assertIn(f"State.{state.id}", self.storage.all())
+
+    def test_object_deletion(self):
+        """Test that objects are removed from the file after deletion."""
+        obj = BaseModel()
+        self.storage.new(obj)
+        self.storage.save()
+        del self.storage.all()["BaseModel.{}".format(obj.id)]
+        self.storage.save()
+        self.storage.reload()
+        self.assertNotIn("BaseModel.{}".format(obj.id), self.storage.all())
 
 
 if __name__ == '__main__':
