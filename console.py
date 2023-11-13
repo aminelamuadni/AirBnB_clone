@@ -7,6 +7,7 @@ clone project.
 
 
 import cmd
+import json
 import re
 from models import storage
 from models.base_model import BaseModel
@@ -61,6 +62,16 @@ class HBNBCommand(cmd.Cmd):
                     self.do_update(
                         f"{class_name} {id} {attribute_name} {attribute_value}"
                     )
+            elif re.match(r"update\(\".+\", {.+}\)", command):
+                match = re.findall(r"update\(\"(.+)\", ({.+})\)", command)
+                if match:
+                    id, dict_str = match[0]
+                    try:
+                        attr_dict = json.loads(dict_str.replace("'", "\""))
+                        for key, value in attr_dict.items():
+                            self.do_update(f"{class_name} {id} {key} {value}")
+                    except json.JSONDecodeError:
+                        print("** invalid dictionary representation **")
 
     def do_quit(self, arg):
         """Quit command to exit the program.
