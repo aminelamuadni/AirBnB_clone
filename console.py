@@ -36,8 +36,11 @@ class HBNBCommand(cmd.Cmd):
         Default method called for commands that don't match any do_* commands.
         """
         args = line.split('.')
-        if len(args) == 2 and args[1] == "all()":
-            self.do_all(args[0])
+        if len(args) == 2:
+            if args[1] == "all()":
+                self.do_all(args[0])
+            elif args[1] == "count()":
+                self.do_count(args[0])
 
     def do_quit(self, arg):
         """Quit command to exit the program.
@@ -57,6 +60,17 @@ class HBNBCommand(cmd.Cmd):
         Method called when an empty line is entered in response to the prompt.
         """
         pass
+
+    def do_count(self, arg):
+        """
+        Counts the number of instances of a specific class.
+        Usage: <class name>.count()
+        """
+        count = 0
+        for obj in storage.all().values():
+            if obj.__class__.__name__ == arg:
+                count += 1
+        print(count)
 
     def do_create(self, arg):
         """
