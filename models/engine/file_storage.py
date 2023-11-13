@@ -53,3 +53,18 @@ class FileStorage:
                 elif cls_name == 'User':
                     from models.user import User
                     self.__objects[key] = User(**value)
+                elif cls_name == 'State':
+                    from models.state import State
+                    self.__objects[key] = State(**value)
+                elif cls_name == 'City':
+                    from models.city import City
+                    self.__objects[key] = City(**value)
+                elif cls_name == 'Amenity':
+                    from models.amenity import Amenity
+                    self.__objects[key] = Amenity(**value)
+                elif cls_name == 'Place':
+                    from models.place import Place
+                    self.__objects[key] = Place(**value)
+                elif cls_name == 'Review':
+                    from models.review import Review
+                    self.__objects[key] = Review(**value)
