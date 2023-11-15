@@ -30,6 +30,25 @@ class TestUser(unittest.TestCase):
         if os.path.exists("file.json"):
             os.remove("file.json")
 
+    def test_initialization_with_none(self):
+        """Test initialization of User with None values."""
+        user = User(email=None, password=None, first_name=None, last_name=None)
+        self.assertIsNone(user.email)
+        self.assertIsNone(user.password)
+        self.assertIsNone(user.first_name)
+        self.assertIsNone(user.last_name)
+
+    def test_attribute_assignment_to_none(self):
+        """Test assigning None to User attributes."""
+        self.user.email = None
+        self.user.password = None
+        self.user.first_name = None
+        self.user.last_name = None
+        self.assertIsNone(self.user.email)
+        self.assertIsNone(self.user.password)
+        self.assertIsNone(self.user.first_name)
+        self.assertIsNone(self.user.last_name)
+
     def test_instance_creation(self):
         """Test instantiation of User object."""
         self.assertIsInstance(self.user, User)
